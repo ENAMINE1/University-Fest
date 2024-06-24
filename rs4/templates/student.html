@@ -1,0 +1,107 @@
+{% extends 'base2.html' %}
+
+{% block title %}
+Student Page
+{% endblock %}
+
+{% block content %}
+<div style="height: 100vh;overflow-y: auto;">
+<div class="container" style="width:fit-content">
+  <div class="card shadow my-5">
+    <h4 class="card-header" style="color:black">My events</h4>
+    <div class="card-body">
+      <form class="mb-3">
+        <label for="searchBox" style="color:black">Search list</label>
+        <input type="text" id="searchBox" name="searchBox" class="form-control">
+        <small class="form-text feedback"></small>
+      </form>
+      <table class="table table-searchable table-striped table-bordered table-hover table-responsive ">
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for event in registered_events %}
+            <tr>
+                <td style="font-weight: 800; font-style: italic;">{{ event[0] }}</td>
+                <td style="margin-left: 1px;">{{ event[1].strftime(" %d - %m - %Y ") }}</td>
+                <td style="margin-left: 1px;">{{ event[2].strftime(" %H:%M ") }}</td>
+                <td style="margin-left: 1px;">{{ event[3] }}</td>
+                <td data-control="select">
+                    <a href="/event_details/{{event[0]}}" style="color: white;"><button class="btn btn-outline btn-success">Event Details</button></a>
+                </td>
+                <td style="text-align: center;padding: 1px;">
+                    <ul class="action-list">
+                        <!-- <li style="margin: 1px;"><a href="/organizer_page"><button class="button-33" role="button">Winners</button></a></li> -->
+                        <li style="margin: 1px;"><i>Registered</i></li>
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+            {% for event in pending_volunteer_events %}
+            <tr>
+                <td style="font-weight: 800; font-style: italic;">{{ event[0] }}</td>
+                <td style="margin-left: 1px;">{{ event[1].strftime(" %d - %m - %Y ") }}</td>
+                <td style="margin-left: 1px;">{{ event[2].strftime(" %H:%M ") }}</td>
+                <td style="margin-left: 1px;">{{ event[3] }}</td>
+                <td data-control="select">
+                    <a href="/event_details/{{event[0]}}" style="color: white;"><button class="btn btn-outline btn-success">Event Details</button></a>
+                </td>
+                <td style="text-align: center;padding: 1px;">
+                    <ul class="action-list">
+                        <!-- <li style="margin: 1px;"><a href="/organizer_page"><button class="button-33" role="button">Winners</button></a></li> -->
+                        <li style="margin: 1px;"><i>Pending</i></li>
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% for event in sanctioned_volunteer_events %}
+            <tr>
+                <td style="font-weight: 800; font-style: italic;">{{ event[0] }}</td>
+                <td style="margin-left: 1px;">{{ event[1].strftime(" %d - %m - %Y ") }}</td>
+                <td style="margin-left: 1px;">{{ event[2].strftime(" %H:%M ") }}</td>
+                <td style="margin-left: 1px;">{{ event[3] }}</td>
+                <td data-control="select">
+                    <a href="/event_details/{{event[0]}}" style="color: white;"><button class="btn btn-outline btn-success">Event Details</button></a>
+                </td>
+                <td style="text-align: center;padding: 1px;">
+                    <ul class="action-list">
+                        <!-- <li style="margin: 1px;"><a href="/organizer_page"><button class="button-33" role="button">Winners</button></a></li> -->
+                        <li style="margin: 1px;"><i>Volunteered</i></li>
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+            {% for event in idle_events %}
+          {% include 'includes/register_event_modals.html' %}
+          {% include 'includes/volunteer_event_modals.html' %}
+          <tr>
+            <td style="font-weight: 800; font-style: italic; text-align: center;">{{ event[0] }}</td>
+            <td>{{ event[1].strftime(" %d - %m - %Y ") }}</td>
+            <td style="margin-left: 1px;">{{ event[2].strftime(" %H: %M ") }}</td>
+            <td style="margin-left: 1px;">{{ event[3] }}</td>
+            <td data-control="select">
+                <a href="/event_details/{{event[0]}}" style="color: white;"><button class="btn btn-outline btn-success">Event Details</button></a>
+            </td>
+            <td data-control="select">
+                <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#Modal-RegisterEvent-{{ event[0].replace(' ','') }}">Register</button>
+            </td>
+            <td data-control="select">
+                <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#Modal-VolunteerEvent-{{ event[0].replace(' ','') }}">Volunteer</button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer"></div>
+  </div>
+</div>
+</div>
+
+{% endblock %}

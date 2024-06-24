@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}
+  Register Page
+{% endblock %}
+
+{% block content %}
+<div class="container text-center" style="margin-top: 5%; height: 100vh;">
+<div class="row">
+    <div class="col-sm-6">
+      <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+        <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826" class="card-img-top" alt="..." height="400" width="100">
+        <div class="card-body">
+          <a href="{{ url_for('register_student_page') }}"> <button class="button-44">Register as Student</button></a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+        <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826" class="card-img-top" alt="..." height="400" width="100">
+        <div class="card-body">
+          <a href="{{ url_for('register_participant_page') }}"> <button class="button-44">Register as Participant</button></a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+        <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826" class="card-img-top" alt="..." height="400" width="100">
+        <div class="card-body">
+          <a href="{{ url_for('register_organizer_page') }}"> <button class="button-44">Register as Organizer</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

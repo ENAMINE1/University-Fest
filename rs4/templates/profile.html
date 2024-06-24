@@ -1,0 +1,190 @@
+<!------ Include the above in your HEAD tag ---------->
+{% extends 'base.html' %}
+
+{% block title %}
+    Profile Page
+{% endblock %}
+
+{% block content %}
+<div style="height: 100vh;overflow-y: auto;">
+<div class="container emp-profile">
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="profile-img">
+                            <img src="../static/img/pp.jpg" alt="profile picture">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="profile-head">
+                                    <h5>
+                                        {{user[0]}}
+                                    </h5>
+                                    {%if role == 'student'%} 
+                                    <h6>
+                                        {{user[3]}}
+                                    </h6>
+                                    {%else%}
+                                    <h6>
+                                        {{user[2]}}
+                                    </h6>
+                                    {%endif%}
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
+                                </li>
+                                {%if role == 'participant'%}
+                                <li class="nav-item">
+                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Food & Accomodation</a>
+                                </li>
+                                {%endif%}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        {% if role == 'student' %}
+                            <a href="/edit_profile_student" style="display: inline-block;
+                                padding: 10px 20px;
+                                background-color: #007bff;
+                                color: #fff;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                transition: background-color 0.3s ease;
+                                cursor: pointer;"
+                                onmouseover="this.style.backgroundColor='#0056b3';"
+                                onmouseout="this.style.backgroundColor='#007bff';">Edit Profile</a>
+                        {% elif role == 'participant' %}
+                            <a href="/edit_profile_participant" style="display: inline-block;
+                                padding: 10px 20px;
+                                background-color: #007bff;
+                                color: #fff;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                transition: background-color 0.3s ease;
+                                cursor: pointer;"
+                                onmouseover="this.style.backgroundColor='#0056b3';"
+                                onmouseout="this.style.backgroundColor='#007bff';">Edit Profile</a>
+                        {% elif role == 'organizer' %}
+                            <a href="/edit_profile_organizer" style="display: inline-block;
+                                padding: 10px 20px;
+                                background-color: #007bff;
+                                color: #fff;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                transition: background-color 0.3s ease;
+                                cursor: pointer;"
+                                onmouseover="this.style.backgroundColor='#0056b3';"
+                                onmouseout="this.style.backgroundColor='#007bff';">Edit Profile</a>
+                        {%endif%}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="tab-content profile-tab" id="myTabContent">
+                            {%if role == 'student'%}
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                        <div class="row">
+                                            
+                                            <div class="col-md-6">
+                                                <p>Roll No: {{user[2]}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            
+                                            <div class="col-md-6">
+                                                <p>Department : {{user[4]}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            
+                                            <div class="col-md-6">
+                                                <p>Email ID : {{user[5]}}</p>
+                                            </div>
+                                        </div>
+                            </div>
+                            {%elif role == 'participant'%}
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p>College Name : {{user[3]}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p>Address : {{user[4]}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p>Email ID : {{user[6]}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p>Contact: {{user[5]}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {%else%}
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p>Email ID : {{user[3]}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {%endif%}
+                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                {%if user[8] != None%}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p>Guest House Name : {{guest_house[0]}}</p>
+                                        <p>Price : {{guest_house[3]}}</p>
+                                        
+                                    </div>
+                                </div>
+                                {%else%}
+                                <a href="/guest_house" style="display: inline-block;
+                               padding: 10px 20px;
+                               background-color: #007bff;
+                               color: #fff;
+                               text-decoration: none;
+                               border-radius: 5px;
+                               transition: background-color 0.3s ease;
+                               cursor: pointer;"
+                               onmouseover="this.style.backgroundColor='#0056b3';"
+                               onmouseout="this.style.backgroundColor='#007bff';">Set Accommodation</a>
+
+                                {%endif%}
+                                        {%if user[7] != None%}
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p>Food : {{user[7]}}</p>
+                                            </div>
+                                        </div>
+                                        {%else%}
+                                        <form method="POST">
+                                            <div style="color: black;">
+                                                Choose Food Type: 
+                                            </div>
+                                            
+                                            {{ food_form.hidden_tag() }}
+                                            <div class="field" >
+                                                <div class="fas fa-user"></div>
+                                                {{ food_form.food_type(class="form-control", placeholder="Food Type" ) }}
+                                            </div> 
+                                            <div class="field">
+                                                {{ food_form.submit() }}
+                                            </div>
+                                        </form>
+                                        {%endif%}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>           
+        </div>
+</div>
+        {% endblock %}

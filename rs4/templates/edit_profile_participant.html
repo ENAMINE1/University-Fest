@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Edit Profile Participant
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 40rem; opacity: 0.8; height: 100vh;">
+    <div class="container">
+    <div id="unique_login" class=" container login-form d-flex flex-column bd-highlight mb-3 mt-5" style="width: 100%; height:fit-content;">
+        <form method="POST">
+            <div class="text">
+                UPDATE PROFILE
+            </div>
+            
+            {{ form.hidden_tag() }}
+            <div class="field">
+                <div class="fas fa-sharp fa-light fa-face-smile-beam"></div>
+                {{ form.name(class="form-control", type="text", placeholder="Name", value = user[2]) }}
+            </div>
+            <div class="field">
+                <div class="fas fa-sharp fa-light fa-face-smile-beam"></div>
+                {{ form.college_name(class="form-control", type="text", placeholder="College Name", value = user[3]) }}
+            </div>
+            <div class="field">
+                <div class="fas fa-sharp fa-light fa-face-smile-beam"></div>
+                {{ form.address(class="form-control", type="text", placeholder="Address", value = user[4]) }}
+            </div>
+            <div class="field">
+                <div class="fas fa-sharp fa-light fa-face-smile-beam"></div>
+                {{ form.contact(class="form-control", type="text", placeholder="Contact Number", value = user[5]) }}
+            </div>
+            <div class="field">
+                <div class="fas fa-envelope"></div>
+                {{ form.email(class="form-control", type="text", placeholder="Email Address", value=user[6]) }}
+            </div>
+            <div class="field">
+                {{ form.submit() }}
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+{% endblock %}

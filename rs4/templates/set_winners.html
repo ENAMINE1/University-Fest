@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Set Winners Page
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 40rem; opacity: 0.8; height: 100vh;">
+    <div class="container">
+    <div id="unique_login" class=" container login-form d-flex flex-column bd-highlight mb-3 mt-5" style="width: 100%; height:fit-content;">
+        <form method="POST">
+            <div class="text">
+                Set Winners
+            </div>
+            {{ form.hidden_tag() }}
+            <div class="field" >
+                <div class="fas fa-user"></div>
+                {{ form.winner_1(class="form-control", type="text", placeholder="Winner 1" ) }}
+            </div>
+            <div class="field" >
+                <div class="fas fa-user"></div>
+                {{ form.winner_2(class="form-control", type="text", placeholder="Winner 2" ) }}
+            </div>
+            <div class="field" >
+                <div class="fas fa-user"></div>
+                {{ form.winner_3(class="form-control", type="text", placeholder="Winner 3" ) }}
+            </div>
+            <div class="field">
+                {{ form.submit() }}
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+{% endblock %}

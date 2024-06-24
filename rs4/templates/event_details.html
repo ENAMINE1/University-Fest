@@ -1,0 +1,137 @@
+{% extends 'base2.html' %}
+
+{% block title %}
+Event Details
+{% endblock %}
+
+{% block content %}
+
+<div style="background-color: lightblue; /* Light blue background */
+            padding: 20px; /* Padding for spacing */
+            border: 2px solid blue; /* Blue border */
+            border-radius: 10px; /* Rounded corners */
+            max-width: 600px; /* Maximum width */
+            margin: 0 auto; /* Center horizontally */
+            text-align: center; /* Center-align text */">
+    <h2 style="color: blue; /* Blue text color */
+               text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for better visibility */
+               font-family: Arial, sans-serif; /* Font family */
+               margin-bottom: 20px; /* Bottom margin for spacing */
+               ">Event Name: {{ event[0] }}</h2>
+    <h4 style="color: #333; /* Dark text color */
+               font-family: Arial, sans-serif; /* Font family */
+               margin-bottom: 10px; /* Bottom margin for spacing */
+               ">Date: {{ event[1].strftime(" %d - %m - %Y ") }}</h4>
+    <h4 style="color: #333; /* Dark text color */
+               font-family: Arial, sans-serif; /* Font family */
+               margin-bottom: 10px; /* Bottom margin for spacing */
+               ">Time: {{ event[2].strftime(" %H : %M ") }}</h4>
+    <h4 style="color: #333; /* Dark text color */
+               font-family: Arial, sans-serif; /* Font family */
+               margin-bottom: 10px; /* Bottom margin for spacing */
+               ">Description: {{ event[3] }}</h4>
+    <h4 style="color: #333; /* Dark text color */
+               font-family: Arial, sans-serif; /* Font family */
+               margin-bottom: 10px; /* Bottom margin for spacing */
+               ">Organiser-Name: {{ event[10] }}</h4>
+    <h4 style="color: #333; /* Dark text color */
+               font-family: Arial, sans-serif; /* Font family */
+               margin-bottom: 10px; /* Bottom margin for spacing */
+               ">First-prize Money: {{ event[4] }}</h4>
+    <h4 style="color: #333; /* Dark text color */
+               font-family: Arial, sans-serif; /* Font family */
+               margin-bottom: 10px; /* Bottom margin for spacing */
+               ">Second-Prize Money: {{ event[5] }}</h4>
+    <h4 style="color: #333; /* Dark text color */
+               font-family: Arial, sans-serif; /* Font family */
+               margin-bottom: 10px; /* Bottom margin for spacing */
+               ">Third-Prize Money: {{ event[6] }}</h4>
+</div>
+
+    <div class="container" style="width:fit-content" style="background-color:black;">
+      <div class="card shadow my-5 ">
+        <h4 class="card-header" style="color:black">Volunteer List</h4>
+        <div class="card-body">
+          <form class="mb-3">
+            <label for="searchBox" style="color:black">Search list</label>
+            <input type="text" id="searchBox" name="searchBox" class="form-control">
+            <small class="form-text feedback"></small>
+          </form>
+          <table class="table table-searchable table-striped table-bordered table-hover table-responsive">
+            <thead>
+              <tr>
+                <th>Roll Number</th>
+                <th>Name</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%if role == 'organizer'%}
+              {% for volunteer in pending_volunteers %}
+              {% include 'includes/accept_volunteer_modals.html' %}
+              <tr>
+                <td style="font-weight: 800; font-style: italic;">{{ volunteer[2] }}</td>
+                <td>{{ volunteer[3] }}</td>
+                <td>{{ volunteer[5] }}</td>
+                <td data-control="select">
+                  <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#Modal-AcceptVolunteer-{{ volunteer[0].replace(' ','') }}">Accept</button>
+                </td>
+              </tr>
+              {% endfor %}
+              {%endif%}
+              {% for volunteer in sanctioned_volunteers %}
+              <tr>
+                <td style="font-weight: 800; font-style: italic;">{{ volunteer[2] }}</td>
+                <td>{{ volunteer[3] }}</td>
+                <td>{{ volunteer[5] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <!-- <div class="card-footer"></div> -->
+      </div>
+    </div>
+  </div>
+
+  {% if role=='organizer' and event[7]==None %}
+    <!-- <div class="container" style="max-width: 40rem; opacity: 0.8;"> -->
+      <!-- <div class="container"> -->
+        <div style="text-align: center;">
+          <a href="/set_winners/{{event[0]}}" style="display: inline-block;
+              padding: 10px 20px;
+              background-color: #007bff;
+              color: #fff;
+              text-decoration: none;
+              border-radius: 5px;
+              transition: background-color 0.3s ease;
+              cursor: pointer;"
+              onmouseover="this.style.backgroundColor='#0056b3';"
+              onmouseout="this.style.backgroundColor='#007bff';">Set Winners</a>
+      </div>
+      
+      
+      
+      <!-- </div> -->
+  <!-- </div> -->
+  </div>
+  
+  {% elif event[7] == None %}
+  <div style="background-color: lightblue; padding: 20px; font-family: Arial, sans-serif; text-align: center;">
+    <h1 style="color: blue; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); margin-bottom: 20px;">Winners not Declared Yet!</h1>
+  </div>
+  {% else %}
+  <div style="background-color: lightblue; padding: 20px; font-family: Arial, sans-serif; text-align: center;">
+    <h1 style="color: blue; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); margin-bottom: 20px;">List of Winners:</h1>
+    <h3 style="color: #333; margin-bottom: 10px;">1. {{ event[7] }} is awarded prize money of {{ event[4] }}</h3>
+    <h3 style="color: #333; margin-bottom: 10px;">2. {{ event[8] }} is awarded prize money of {{ event[5] }}</h3>
+    <h3 style="color: #333; margin-bottom: 10px;">3. {{ event[9] }} is awarded prize money of {{ event[6] }}</h3>
+  </div>
+  {% endif %}
+
+
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,63 @@
+
+
+{% extends 'base.html' %}
+
+{% block title %}
+    Create Event
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 40rem; opacity: 0.8;">
+    <div >
+        <div id="unique_login" class=" container login-form d-flex flex-column bd-highlight mb-3 mt-5"
+            style="width: 100%; height:fit-content;">
+            <form method="POST" class="container">
+                {{ form.hidden_tag() }}
+                <div class="text">
+                    CREATE NEW EVENT
+                    <br><br>
+                </div>
+                <div class="field">
+                    <div class="fas fa-sharp fa-light fa-face-smile-beam"></div>
+                    {{ form.event_name(class="form-control", type="text", placeholder="Event Name") }}
+                </div>
+                <div class="field">
+                    <div class="fas fa-light fa-location-dot"></div>
+                    {{ form.date(class="form-control", type="date", placeholder="Date") }}
+                </div>
+                <div class="field">
+                    <div class="fas fa-light fa-location-dot"></div>
+                    {{ form.time(class="form-control", type="time", placeholder="Time") }}
+                </div>
+                <div class="field">
+                    <div class="fas fa-light fa-location-dot"></div>
+                    {{ form.description(class="form-control", type="text", placeholder="Event Description") }}
+                </div>
+                {% if role == 'admin' %}
+                <div class="field">
+                    <div class="fas fa-light fa-location-dot"></div>
+                    {{ form.org_name(class="form-control", type="text", placeholder="Organizer") }}
+                </div>  
+                {%endif%}
+                <div class="field">
+                    <div class="fas fa-light fa-location-dot"></div>
+                    {{ form.first_prize_amt(class="form-control", type="text", placeholder="First Prize Amount") }}
+                </div>  
+                <div class="field">
+                    <div class="fas fa-light fa-location-dot"></div>
+                    {{ form.second_prize_amt(class="form-control", type="text", placeholder="Second Prize Amount") }}
+                </div>
+                <div class="field">
+                    <div class="fas fa-light fa-location-dot"></div>
+                    {{ form.third_prize_amt(class="form-control", type="text", placeholder="Third Prize Amount") }}
+                </div>
+                <div class="field">
+                    {{ form.submit() }}
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

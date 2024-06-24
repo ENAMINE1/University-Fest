@@ -1,0 +1,52 @@
+{% extends 'base2.html' %}
+
+{% block title %}
+View Organizer
+{% endblock %}
+
+{% block content %}
+<div style="height: 100vh;overflow-y: auto;">
+    <div class="container" style="width:fit-content">
+        <div class="card shadow my-5">
+            <h4 class="card-header" style="color:black">My events</h4>
+            <div class="card-body">
+                <form class="mb-3">
+                    <label for="searchBox" style="color:black">Search list</label>
+                    <input type="text" id="searchBox" name="searchBox" class="form-control">
+                    <small class="form-text feedback"></small>
+                </form>
+                <table class="table table-searchable table-striped table-bordered table-hover table-responsive ">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        {% include 'includes/delete_event_modals.html' %}
+
+                        <tr>
+                            <td style="font-weight: 800; font-style: italic; text-align: center;">{{ event[0] }}</td>
+                            <td style="font-weight: 800; font-style: italic; text-align: center;">{{ event[1] }}</td>
+                            <td style="font-weight: 800; font-style: italic; text-align: center;">{{ event[2] }}</td>
+                            <td style="font-weight: 800; font-style: italic; text-align: center;">{{ event[3] }}</td>
+                            <td data-control="select">
+                                <button class="btn btn-outline btn-success" data-toggle="modal"
+                                    data-target="#Modal-DeleteEvent-{{ event[0].replace(' ','') }}">Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer"></div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

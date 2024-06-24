@@ -1,0 +1,49 @@
+{% extends 'base2.html' %}
+
+{% block title %}
+Guest House
+{% endblock %}
+
+{% block content %}
+<div style="height: 100vh;overflow-y: auto;">
+<div class="container" style="width:fit-content">
+  <div class="card shadow my-5">
+    <h4 class="card-header" style="color:black">My events</h4>
+    <div class="card-body">
+      <form class="mb-3">
+        <label for="searchBox" style="color:black">Search list</label>
+        <input type="text" id="searchBox" name="searchBox" class="form-control">
+        <small class="form-text feedback"></small>
+      </form>
+      <table class="table table-searchable table-striped table-bordered table-hover table-responsive ">
+        <thead>
+          <tr>
+            <th>Guest House Name</th>
+            <th>Total rooms</th>
+            <th>Available rooms</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for guest_house in guest_houses %}
+            {% include 'includes/book_room_modals.html' %}
+
+            <tr>
+                <td style="font-weight: 800; font-style: italic;">{{ guest_house[0] }}</td>
+                <td style="margin-left: 1px;">{{ guest_house[1] }}</td>
+                <td style="margin-left: 1px;">{{ guest_house[2] }}</td>
+                <td style="margin-left: 1px;">{{ guest_house[3] }}</td>
+                <td data-control="select">
+                    <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#Modal-book_room-{{ guest_house[0].replace(' ','') }}">Book</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer"></div>
+  </div>
+</div>
+</div>
+
+{% endblock %}

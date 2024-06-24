@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}
+Admin Page
+{% endblock %}
+
+{% block content %}
+<div class="container text-center" style="margin-top: 5%;">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+                <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826"
+                    class="card-img-top" alt="..." height="400" width="100">
+                <div class="card-body">
+                    <h2>Student Table</h2>
+                    <br>
+                    <a href="{{ url_for('add_student_page') }}"> <button class="button-44">Add Entry</button></a>
+                    <a href="{{ url_for('view_student_page') }}"> <button class="button-44">View Table</button></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+                <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826"
+                    class="card-img-top" alt="..." height="400" width="100">
+                <h2>Participant Table</h2>
+                <br>
+                <div class="card-body">
+                    <a href="{{ url_for('add_participant_page') }}"> <button class="button-44">Add 
+                            Entry</button></a>
+                    <a href="{{ url_for('view_participant_page') }}"> <button class="button-44">View Table</button></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+                <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826"
+                    class="card-img-top" alt="..." height="400" width="100">
+                <h2>Organizer Table</h2>
+                <div class="card-body">
+                    <a href="{{ url_for('add_organizer_page') }}"> <button class="button-44">Add Entry</button></a>
+                    <a href="{{ url_for('view_organizer_page') }}"> <button class="button-44">View Table</button></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+                <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826"
+                    class="card-img-top" alt="..." height="400" width="100">
+                <h2>Event Table</h2>
+                <div class="card-body">
+                    <a href="{{ url_for('add_event_page') }}"> <button class="button-44">Add Entry</button></a>
+                    <a href="{{ url_for('view_event_page') }}"> <button class="button-44">View Table</button></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+                <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826"
+                    class="card-img-top" alt="..." height="400" width="100">
+                <h2>Student Event Registration Table</h2>
+                <div class="card-body">
+                    <a href="{{ url_for('add_student_event_page') }}"> <button class="button-44">Add Entry</button></a>
+                    <a href="{{ url_for('view_student_event_page') }}"> <button class="button-44">View Table</button></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+                <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826"
+                    class="card-img-top" alt="..." height="400" width="100">
+                <h2>Participant Event Registration Table</h2>
+                <div class="card-body">
+                    <a href="{{ url_for('add_participant_event_page') }}"> <button class="button-44">Add Entry</button></a>
+                    <a href="{{ url_for('view_participant_event_page') }}"> <button class="button-44">View Table</button></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+                <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826"
+                    class="card-img-top" alt="..." height="400" width="100">
+                <h2>Student Event Volunteer Table</h2>
+                <div class="card-body">
+                    <a href="{{ url_for('add_volunteer_event_page') }}"> <button class="button-44">Add Entry</button></a>
+                    <a href="{{ url_for('view_volunteer_event_page') }}"> <button class="button-44">View Table</button></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+                <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826"
+                    class="card-img-top" alt="..." height="400" width="100">
+                <h2>Guest House Table</h2>
+                <div class="card-body">
+                    <a href="{{ url_for('add_guest_house_page') }}"> <button class="button-44">Add Entry</button></a>
+                    <a href="{{ url_for('view_guest_house_page') }}"> <button class="button-44">View Table</button></a>
+                </div>
+            </div>
+        </div>
+        
+    <!-- </div> -->
+</div>
+{% endblock %}

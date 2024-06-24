@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}
+Login Page
+{% endblock %}
+
+{% block content %}
+<div class="container text-center" style="margin-top: 5%; height: 100vh;">
+<div class="row">
+    <div class="col-sm-6">
+      <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+        <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826" class="card-img-top" alt="..." height="400" width="100">
+        <div class="card-body">
+          <a href="{{ url_for('login_student_page') }}"> <button class="button-44">Login as Student</button></a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+        <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826" class="card-img-top" alt="..." height="400" width="100">
+        <div class="card-body">
+          <a href="{{ url_for('login_participant_page') }}"> <button class="button-44">Login as Participant</button></a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+        <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826" class="card-img-top" alt="..." height="400" width="100">
+        <div class="card-body">
+          <a href="{{ url_for('login_organizer_page') }}"> <button class="button-44">Login as Organizer</button></a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card" style="background: linear-gradient(to right, #184b73, #49ae98);">
+        <img src="https://img.freepik.com/premium-vector/car-protection-business-concept_114835-209.jpg?w=826" class="card-img-top" alt="..." height="400" width="100">
+        <div class="card-body">
+          <a href="{{ url_for('login_admin_page') }}"> <button class="button-44">Login as Administrator</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

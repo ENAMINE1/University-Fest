@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Home Page
+{% endblock %}
+
+{% block content %}
+  
+  <div id="home" class="flex" style="position: relative;">
+    <div class="container">
+      <div class="row">
+          <div class="col-xl-12 col-lg-12">
+              <div>
+                <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                <h1 style="color: white; /* Text color */
+               text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for better visibility */
+               padding: 20px; /* Padding for better readability */">
+        College Festival Management Software
+    </h1>
+              </div> 
+              <a href="{{ url_for('register_page') }}"><button class="button-44">Register with us Today!</button></a>
+              <a href="{{ url_for('login_page') }}"><button class="button-44">Login</button></a>
+          </div>
+      </div>
+  </div>
+  <style>
+    #home {
+      background-image: url('/static/img/h1_hero.jpg');
+      height: 100vh;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+  </style>
+
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Organizer Page
+{% endblock %}
+
+{% block content %}
+
+
+<div id="manager">
+    <div class="container">
+
+        <a href="{{ url_for('create_event_page') }}" style="color: white;">
+            <div class="card">
+                <div class="box">
+                    <div class="content">
+                        <h5>Create Event</h5>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ url_for('organizer_events_page') }}" style="color: white;">
+            <div class="card">
+                <div class="box">
+                    <div class="content">
+                        <h5>My Events</h5>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

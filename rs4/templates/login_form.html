@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}
+    Login Page
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 40rem; opacity: 0.8; height: 100vh;">
+    <div class="container">
+    <div id="unique_login" class=" container login-form d-flex flex-column bd-highlight mb-3 mt-5" style="width: 100%; height:fit-content;">
+        <form method="POST">
+            <div class="text">
+                LOGIN
+            </div>
+            {{ form.hidden_tag() }}
+            <div class="field">
+                <div class="fas fa-user"></div>
+                {{ form.username(class="form-control", type="text", placeholder="User Name") }}
+            </div>
+            <div class="field">
+                <div class="fas fa-lock"></div>
+                {{ form.password(class="form-control", type="password", placeholder="Password") }}
+            </div>
+            <div class="field">
+                {{ form.submit() }}
+            </div>
+            <div class="link mb-3">
+                <h6>Do not have an account?</h6>
+                <a href="{{ url_for('register_page') }}">Register</a>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+{% endblock %}
