@@ -39,17 +39,3 @@ The system supports the following workflows for different users:
 - Add and delete user accounts.
 - Implement and manage data security policies with suitable access control.
 
-## Technology Requirements
-To develop the web-based system, the following technologies will be utilized:
-
-### Frontend
-- A browser-based web interface with form interfaces for user interactions.
-- Technologies: HTML, CSS, JavaScript, and a frontend framework (e.g., React, Angular, or Vue).
-
-### Backend
-- Connectivity to a backend database to handle data storage and retrieval.
-- Backend programming languages: Java, PHP, Python, or any suitable language.
-
-### Database
-- Relational database management system (RDBMS) such as PostgreSQL or MySQL.
-- Implementation of triggers and procedures to support the workflow.
