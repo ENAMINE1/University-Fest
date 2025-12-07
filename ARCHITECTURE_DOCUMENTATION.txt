@@ -1,0 +1,1524 @@
+================================================================================
+        UNIVERSITY CULTURAL FESTIVAL MANAGEMENT SYSTEM
+                ARCHITECTURE & DESIGN DOCUMENTATION
+================================================================================
+
+TABLE OF CONTENTS
+-----------------
+1. System Overview
+2. Architecture Pattern
+3. Technology Stack
+4. Database Architecture
+5. Application Structure
+6. User Roles & Access Control
+7. Core Features & Functionality
+8. Frontend Design
+9. Authentication & Security
+10. Data Flow
+11. File Organization
+12. API Endpoints & Routes
+13. Design Patterns & Best Practices
+14. Limitations & Security Concerns
+
+================================================================================
+1. SYSTEM OVERVIEW
+================================================================================
+
+Project Name: RS4 - University Cultural Festival Management System
+
+Purpose:
+--------
+A web-based platform designed to manage university cultural festival operations
+including event management, user registration, volunteer coordination, guest
+house bookings, and prize distribution.
+
+Primary Users:
+--------------
+- External Participants (from other colleges)
+- University Students
+- Event Organizers
+- Database Administrators
+- Volunteers
+
+================================================================================
+2. ARCHITECTURE PATTERN
+================================================================================
+
+Pattern: Monolithic MVC (Model-View-Controller)
+------------------------------------------------
+
+Architecture Type: Server-Side Rendered Web Application
+
+Components:
+-----------
+┌─────────────────────────────────────────────────────────────┐
+│                         CLIENT LAYER                         │
+│  (Web Browser - HTML/CSS/JavaScript/Bootstrap Frontend)     │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+                       ▼ HTTP Requests/Responses
+┌─────────────────────────────────────────────────────────────┐
+│                    APPLICATION LAYER (Flask)                 │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │   Routes     │  │    Forms     │  │   Models     │      │
+│  │  (routes.py) │  │  (forms.py)  │  │ (models.py)  │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+                       ▼ SQL Queries
+┌─────────────────────────────────────────────────────────────┐
+│                      DATABASE LAYER                          │
+│                   PostgreSQL Database                        │
+└─────────────────────────────────────────────────────────────┘
+
+Flow Description:
+-----------------
+1. Client sends HTTP requests to Flask application
+2. Routes (controllers) handle incoming requests
+3. Forms validate user input data
+4. Models interact with PostgreSQL database using psycopg2
+5. Templates render dynamic HTML with Jinja2
+6. Response sent back to client browser
+
+================================================================================
+3. TECHNOLOGY STACK
+================================================================================
+
+Backend Framework:
+------------------
+- Flask 2.x (Python microframework)
+  - Lightweight web framework
+  - RESTful request dispatching
+  - Session management
+  - Flash messaging system
+
+Template Engine:
+----------------
+- Jinja2 (integrated with Flask)
+  - Server-side template rendering
+  - Template inheritance (base.html, base2.html)
+  - Dynamic content generation
+
+Database:
+---------
+- PostgreSQL
+  - Relational database management system
+  - Host: 127.0.0.1:5432
+  - Database: postgres
+  - Direct SQL queries via psycopg2 (no ORM)
+
+Database Driver:
+----------------
+- psycopg2
+  - PostgreSQL adapter for Python
+  - Raw SQL query execution
+  - Manual connection management
+
+Form Handling:
+--------------
+- Flask-WTF (WTForms integration)
+  - CSRF protection
+  - Form validation
+  - Custom validators
+
+Security:
+---------
+- Flask-Bcrypt
+  - Password hashing (bcrypt algorithm)
+  - Password verification
+
+Frontend Technologies:
+----------------------
+- HTML5
+- CSS3 (Custom styles)
+- JavaScript (jQuery 3.2.1)
+- Bootstrap 4.5.3
+  - Responsive grid system
+  - Pre-built UI components
+  - Navigation bars
+- Font Awesome 6.4.0
+  - Icon library
+
+Additional Libraries:
+---------------------
+- BeautifulSoup4
+  - HTML parsing (used in form validation)
+- PrettyTable
+  - Console output formatting
+- SMTP.js
+  - Email functionality (OTP for password reset)
+
+================================================================================
+4. DATABASE ARCHITECTURE
+================================================================================
+
+Database Management System: PostgreSQL
+Connection Configuration:
+--------------------------
+{
+    'host': '127.0.0.1',
+    'port': 5432,
+    'user': 'postgres',
+    'password': '2020',
+    'database': 'postgres'
+}
+
+DATABASE SCHEMA:
+----------------
+
+1. STUDENT Table
+   ┌──────────────┬──────────────┬─────────────────────────┐
+   │ Column Name  │ Data Type    │ Constraints             │
+   ├──────────────┼──────────────┼─────────────────────────┤
+   │ username     │ VARCHAR(50)  │ PRIMARY KEY             │
+   │ password     │ VARCHAR(100) │ NOT NULL (bcrypt hash)  │
+   │ roll         │ CHAR(9)      │ UNIQUE                  │
+   │ name         │ VARCHAR(100) │ NOT NULL                │
+   │ dept         │ VARCHAR(50)  │ NOT NULL                │
+   │ email        │ VARCHAR(100) │ UNIQUE, NOT NULL        │
+   └──────────────┴──────────────┴─────────────────────────┘
+
+2. PARTICIPANT Table
+   ┌──────────────┬──────────────┬─────────────────────────┐
+   │ Column Name  │ Data Type    │ Constraints             │
+   ├──────────────┼──────────────┼─────────────────────────┤
+   │ username     │ VARCHAR(50)  │ PRIMARY KEY             │
+   │ password     │ VARCHAR(100) │ NOT NULL (bcrypt hash)  │
+   │ name         │ VARCHAR(100) │ NOT NULL                │
+   │ college_name │ VARCHAR(100) │                         │
+   │ address      │ VARCHAR(100) │                         │
+   │ contact      │ CHAR(10)     │                         │
+   │ email        │ VARCHAR(100) │ UNIQUE, NOT NULL        │
+   │ food         │ VARCHAR(100) │ (veg/non-veg)           │
+   │ accomodation │ VARCHAR(100) │ FK to guest_house       │
+   └──────────────┴──────────────┴─────────────────────────┘
+
+3. ORGANIZER Table
+   ┌──────────────┬──────────────┬─────────────────────────┐
+   │ Column Name  │ Data Type    │ Constraints             │
+   ├──────────────┼──────────────┼─────────────────────────┤
+   │ username     │ VARCHAR(50)  │ PRIMARY KEY             │
+   │ password     │ VARCHAR(100) │ NOT NULL (bcrypt hash)  │
+   │ name         │ VARCHAR(100) │ NOT NULL                │
+   │ email        │ VARCHAR(100) │ UNIQUE, NOT NULL        │
+   └──────────────┴──────────────┴─────────────────────────┘
+
+4. ADMIN Table
+   ┌──────────────┬──────────────┬─────────────────────────┐
+   │ Column Name  │ Data Type    │ Constraints             │
+   ├──────────────┼──────────────┼─────────────────────────┤
+   │ username     │ VARCHAR(50)  │ PRIMARY KEY             │
+   │ password     │ VARCHAR(100) │ NOT NULL (bcrypt hash)  │
+   └──────────────┴──────────────┴─────────────────────────┘
+
+   Default Admin Users:
+   - swapnil, raj, soumojit, sukhomay, shashwat
+
+5. EVENT Table
+   ┌──────────────────┬──────────────┬──────────────────────┐
+   │ Column Name      │ Data Type    │ Constraints          │
+   ├──────────────────┼──────────────┼──────────────────────┤
+   │ event_name       │ VARCHAR(50)  │ PRIMARY KEY          │
+   │ date             │ DATE         │ NOT NULL             │
+   │ time             │ TIME         │ NOT NULL             │
+   │ description      │ VARCHAR(1024)│                      │
+   │ first_prize_amt  │ MONEY        │                      │
+   │ second_prize_amt │ MONEY        │                      │
+   │ third_prize_amt  │ MONEY        │                      │
+   │ winner_1         │ VARCHAR(50)  │                      │
+   │ winner_2         │ VARCHAR(50)  │                      │
+   │ winner_3         │ VARCHAR(50)  │                      │
+   │ org_name         │ VARCHAR(50)  │ FK → organizer       │
+   └──────────────────┴──────────────┴──────────────────────┘
+
+   Foreign Keys:
+   - org_name REFERENCES organizer(username)
+     ON DELETE CASCADE ON UPDATE CASCADE
+
+6. STUDENT_EVENT Table (Junction Table)
+   ┌──────────────┬──────────────┬──────────────────────────┐
+   │ Column Name  │ Data Type    │ Constraints              │
+   ├──────────────┼──────────────┼──────────────────────────┤
+   │ username     │ VARCHAR(50)  │ FK → student(username)   │
+   │ event_name   │ VARCHAR(50)  │ FK → event(event_name)   │
+   │              │              │ PRIMARY KEY (both)       │
+   └──────────────┴──────────────┴──────────────────────────┘
+
+   Represents: Student registration for events
+
+7. PARTICIPANT_EVENT Table (Junction Table)
+   ┌──────────────┬──────────────┬────────────────────────────┐
+   │ Column Name  │ Data Type    │ Constraints                │
+   ├──────────────┼──────────────┼────────────────────────────┤
+   │ username     │ VARCHAR(50)  │ FK → participant(username) │
+   │ event_name   │ VARCHAR(50)  │ FK → event(event_name)     │
+   │              │              │ PRIMARY KEY (both)         │
+   └──────────────┴──────────────┴────────────────────────────┘
+
+   Represents: External participant registration for events
+
+8. VOLUNTEER_EVENT Table (Junction Table)
+   ┌──────────────┬──────────────┬──────────────────────────┐
+   │ Column Name  │ Data Type    │ Constraints              │
+   ├──────────────┼──────────────┼──────────────────────────┤
+   │ username     │ VARCHAR(50)  │ FK → student(username)   │
+   │ event_name   │ VARCHAR(50)  │ FK → event(event_name)   │
+   │ status       │ VARCHAR(20)  │ 'pending'/'sanctioned'   │
+   │              │              │ PRIMARY KEY (both)       │
+   └──────────────┴──────────────┴──────────────────────────┘
+
+   Represents: Volunteer applications and approvals
+
+9. GUEST_HOUSE Table
+   ┌──────────────────┬──────────────┬─────────────────────┐
+   │ Column Name      │ Data Type    │ Constraints         │
+   ├──────────────────┼──────────────┼─────────────────────┤
+   │ guest_house_name │ VARCHAR(100) │ PRIMARY KEY         │
+   │ total_rooms      │ INTEGER      │ NOT NULL            │
+   │ available_rooms  │ INTEGER      │ NOT NULL            │
+   │ price            │ MONEY        │ NOT NULL            │
+   └──────────────────┴──────────────┴─────────────────────┘
+
+   Pre-populated Guest Houses:
+   - TGH Deluxe Room (50 rooms, ₹5000)
+   - TGH Super Deluxe Room (50 rooms, ₹10000)
+   - SAM Deluxe Room (50 rooms, ₹2500)
+   - SAM Super Deluxe Room (50 rooms, ₹5000)
+   - VGH Deluxe Room (4 rooms, ₹2000)
+   - VGH Super Deluxe Room (50 rooms, ₹4000)
+
+ENTITY RELATIONSHIPS:
+---------------------
+
+Student ────┬──── Student_Event ──── Event
+            │
+            └──── Volunteer_Event ─── Event
+
+Participant ──── Participant_Event ─── Event
+            │
+            └──── Guest_House (accommodation)
+
+Organizer ────── Event (creates and manages)
+
+Admin ──────────── (manages all entities)
+
+Cardinality:
+------------
+- One Student can register for Many Events (1:N)
+- One Student can volunteer for Many Events (1:N)
+- One Participant can register for Many Events (1:N)
+- One Participant can book One Guest House (1:1)
+- One Organizer can create Many Events (1:N)
+- One Event belongs to One Organizer (N:1)
+
+================================================================================
+5. APPLICATION STRUCTURE
+================================================================================
+
+Project Directory Structure:
+----------------------------
+
+testfest/
+│
+├── rs4/                          # Main application package
+│   ├── __init__.py              # Flask app initialization
+│   ├── models.py                # Database models & auth logic
+│   ├── routes.py                # Route handlers (controllers)
+│   ├── forms.py                 # Form definitions & validation
+│   │
+│   ├── templates/               # Jinja2 HTML templates
+│   │   ├── base.html           # Main base template
+│   │   ├── base2.html          # Alternate base template
+│   │   ├── home.html           # Landing page
+│   │   ├── login.html          # Login selection page
+│   │   ├── login_form.html     # Login form
+│   │   ├── register.html       # Registration selection
+│   │   │
+│   │   ├── register_student.html
+│   │   ├── register_participant.html
+│   │   ├── register_organizer.html
+│   │   │
+│   │   ├── student.html        # Student dashboard
+│   │   ├── participant.html    # Participant dashboard
+│   │   ├── organizer.html      # Organizer dashboard
+│   │   ├── admin.html          # Admin dashboard
+│   │   │
+│   │   ├── profile.html        # User profile page
+│   │   ├── edit_profile_student.html
+│   │   ├── edit_profile_participant.html
+│   │   ├── edit_profile_organizer.html
+│   │   │
+│   │   ├── create_event.html
+│   │   ├── event_details.html
+│   │   ├── organizer_events.html
+│   │   ├── view_event.html
+│   │   ├── set_winners.html
+│   │   │
+│   │   ├── guest_house.html
+│   │   ├── view_guest_house.html
+│   │   ├── add_guest_house.html
+│   │   │
+│   │   ├── view_student.html
+│   │   ├── view_participant.html
+│   │   ├── view_organizer.html
+│   │   ├── add_student_event.html
+│   │   ├── view_student_event.html
+│   │   │
+│   │   ├── contact_us.html
+│   │   │
+│   │   └── includes/           # Reusable template components
+│   │       ├── accept_volunteer_modals.html
+│   │       ├── book_room_modals.html
+│   │       ├── delete_event_modals.html
+│   │       ├── delete_event_modals1.html
+│   │       ├── volunteer_event_modals.html
+│   │       └── register_event_modals.html
+│   │
+│   ├── static/                  # Static assets
+│   │   └── img/                # Images
+│   │       ├── rs4.jpg
+│   │       ├── h1_hero.jpg     # Homepage background
+│   │       └── pp.jpg
+│   │
+│   └── __pycache__/            # Python bytecode cache
+│
+├── run.py                       # Application entry point
+├── setup.py                     # Database setup script
+├── README.md                    # Project documentation
+└── .gitignore                   # Git ignore rules
+
+Core Application Files:
+-----------------------
+
+1. __init__.py (Application Initialization)
+   - Flask app instantiation
+   - Secret key configuration
+   - Template folder configuration
+   - Imports routes module
+
+2. models.py (Data Layer)
+   - Database connection management
+   - Authentication functions
+   - User class definition (current_user_cls)
+   - Query execution utilities
+   - Database schema creation
+
+3. routes.py (Controller Layer)
+   - 60+ route handlers
+   - Request/response processing
+   - Business logic
+   - Session management
+   - Database operations
+
+4. forms.py (Form Layer)
+   - Form class definitions using Flask-WTF
+   - Field validation rules
+   - Custom validators
+   - CSRF protection
+
+5. run.py (Entry Point)
+   - Starts Flask development server
+   - Debug mode enabled
+   - App execution
+
+6. setup.py (Database Setup)
+   - Creates all database tables
+   - Initializes guest house data
+   - Creates default admin accounts
+   - Hashes admin passwords
+
+================================================================================
+6. USER ROLES & ACCESS CONTROL
+================================================================================
+
+Role-Based Access Control (RBAC):
+----------------------------------
+
+1. STUDENT ROLE
+   └─ Capabilities:
+      ├─ Register for events
+      ├─ Apply to volunteer for events
+      ├─ View event schedules
+      ├─ Check volunteer application status
+      ├─ View registered events
+      ├─ Edit profile (name, email)
+      └─ View event winners
+
+   └─ Accessible Routes:
+      ├─ /student (dashboard)
+      ├─ /profile
+      ├─ /edit_profile_student
+      └─ /logout
+
+2. PARTICIPANT ROLE (External Participants)
+   └─ Capabilities:
+      ├─ Register for events
+      ├─ View event schedules
+      ├─ Book guest house accommodation
+      ├─ Select food preference (veg/non-veg)
+      ├─ Edit profile (name, email, college, address, contact)
+      ├─ View booked accommodation
+      └─ View event winners
+
+   └─ Accessible Routes:
+      ├─ /participant (dashboard)
+      ├─ /guest_house (booking)
+      ├─ /profile
+      ├─ /edit_profile_participant
+      └─ /logout
+
+3. ORGANIZER ROLE
+   └─ Capabilities:
+      ├─ Create new events
+      ├─ View their events
+      ├─ Delete their events
+      ├─ View volunteer applications
+      ├─ Approve/reject volunteers
+      ├─ Set event winners
+      ├─ View event participant details
+      ├─ Edit profile (name, email)
+      └─ View sanctioned volunteers
+
+   └─ Accessible Routes:
+      ├─ /organizer (dashboard)
+      ├─ /create_event
+      ├─ /organizer_events
+      ├─ /event_details/<event_name>
+      ├─ /set_winners/<event_name>
+      ├─ /profile
+      ├─ /edit_profile_organizer
+      └─ /logout
+
+4. ADMIN ROLE (Database Administrator)
+   └─ Capabilities:
+      ├─ Full CRUD operations on all entities
+      ├─ Add students, participants, organizers
+      ├─ Create events (assign to organizers)
+      ├─ Add guest houses
+      ├─ Register users for events
+      ├─ Add volunteer assignments
+      ├─ View all system data
+      ├─ Delete any record
+      └─ System administration
+
+   └─ Accessible Routes:
+      ├─ /admin (dashboard)
+      ├─ /add_student
+      ├─ /add_participant
+      ├─ /add_organizer
+      ├─ /add_event
+      ├─ /add_student_event
+      ├─ /add_participant_event
+      ├─ /add_volunteer_event
+      ├─ /add_guest_house
+      ├─ /view_student
+      ├─ /view_participant
+      ├─ /view_organizer
+      ├─ /view_event
+      ├─ /view_student_event
+      ├─ /view_participant_event
+      ├─ /view_volunteer_event
+      ├─ /view_guest_house
+      └─ /logout
+
+5. PUBLIC ACCESS (Unauthenticated Users)
+   └─ Accessible Routes:
+      ├─ / (home)
+      ├─ /home
+      ├─ /register
+      ├─ /register_student
+      ├─ /register_participant
+      ├─ /register_organizer
+      ├─ /login
+      ├─ /login_student
+      ├─ /login_participant
+      ├─ /login_organizer
+      ├─ /login_admin
+      └─ /contact_us
+
+Session-Based Authorization:
+-----------------------------
+- Role stored in session: session['role']
+- Username stored in session: session['username']
+- Route protection via role checking
+- Unauthorized access redirects to home/login
+
+Access Control Pattern:
+-----------------------
+@app.route('/protected_route')
+def protected_route():
+    role = session.get('role')
+    if role == 'expected_role':
+        # Allow access
+    else:
+        flash("You are not allowed to access this URL", category='danger')
+        return redirect(url_for('home_page'))
+
+================================================================================
+7. CORE FEATURES & FUNCTIONALITY
+================================================================================
+
+FEATURE MATRIX:
+---------------
+
+A. USER MANAGEMENT
+   ├─ Self-Registration
+   │  ├─ Students (roll number, department)
+   │  ├─ Participants (college, address, contact)
+   │  └─ Organizers
+   │
+   ├─ Authentication
+   │  ├─ Separate login for each role
+   │  ├─ Bcrypt password hashing
+   │  └─ Session-based authentication
+   │
+   └─ Profile Management
+      ├─ View profile
+      ├─ Edit profile information
+      └─ Food preference (participants)
+
+B. EVENT MANAGEMENT
+   ├─ Event Creation
+   │  ├─ By organizers (assigned to self)
+   │  └─ By admin (assigned to organizers)
+   │
+   ├─ Event Details
+   │  ├─ Name, date, time
+   │  ├─ Description
+   │  ├─ Prize amounts (1st, 2nd, 3rd)
+   │  └─ Assigned organizer
+   │
+   ├─ Event Registration
+   │  ├─ Students can register
+   │  ├─ Participants can register
+   │  └─ Prevents duplicate registration
+   │
+   ├─ Event Viewing
+   │  ├─ View all events
+   │  ├─ View registered events
+   │  └─ View non-registered events
+   │
+   ├─ Winner Management
+   │  ├─ Organizers set winners
+   │  ├─ Validates winners participated
+   │  └─ Displays winners to all users
+   │
+   └─ Event Deletion
+      ├─ Organizers can delete their events
+      └─ Admin can delete any event
+
+C. VOLUNTEER MANAGEMENT
+   ├─ Volunteer Application
+   │  ├─ Students apply to volunteer
+   │  └─ Application status: pending/sanctioned
+   │
+   ├─ Volunteer Approval
+   │  ├─ Organizers review applications
+   │  ├─ Approve or reject volunteers
+   │  └─ View sanctioned volunteers
+   │
+   └─ Volunteer Dashboard
+      ├─ Pending applications
+      ├─ Sanctioned volunteering
+      └─ Event details
+
+D. ACCOMMODATION MANAGEMENT
+   ├─ Guest House Listing
+   │  ├─ Multiple guest houses
+   │  ├─ Room types (deluxe, super deluxe)
+   │  ├─ Pricing
+   │  └─ Availability tracking
+   │
+   ├─ Room Booking
+   │  ├─ Participants only
+   │  ├─ One booking per participant
+   │  ├─ Real-time availability
+   │  └─ Automatic room decrement
+   │
+   └─ Booking Display
+      ├─ View booked accommodation in profile
+      └─ Guest house details
+
+E. ADMIN OPERATIONS
+   ├─ User Management
+   │  ├─ Add students
+   │  ├─ Add participants
+   │  ├─ Add organizers
+   │  ├─ View all users
+   │  └─ Delete users
+   │
+   ├─ Event Management
+   │  ├─ Create events
+   │  ├─ Assign to organizers
+   │  ├─ View all events
+   │  └─ Delete events
+   │
+   ├─ Registration Management
+   │  ├─ Register users for events
+   │  ├─ Assign volunteers
+   │  └─ View all registrations
+   │
+   └─ Facility Management
+      ├─ Add guest houses
+      ├─ View all guest houses
+      └─ Delete guest houses
+
+F. DASHBOARD FEATURES
+   ├─ Student Dashboard
+   │  ├─ Registered events
+   │  ├─ Pending volunteer applications
+   │  ├─ Sanctioned volunteer events
+   │  └─ Available events for registration
+   │
+   ├─ Participant Dashboard
+   │  ├─ Registered events
+   │  └─ Available events
+   │
+   ├─ Organizer Dashboard
+   │  ├─ Created events
+   │  ├─ Event management links
+   │  └─ Quick actions
+   │
+   └─ Admin Dashboard
+      └─ Administrative action cards
+
+================================================================================
+8. FRONTEND DESIGN
+================================================================================
+
+DESIGN SYSTEM:
+--------------
+
+A. Layout Structure
+   ├─ Base Template (base.html)
+   │  ├─ Navigation Bar
+   │  ├─ Flash Messages
+   │  ├─ Content Block
+   │  └─ Footer
+   │
+   └─ Responsive Grid
+      └─ Bootstrap 4 grid system
+
+B. Navigation Bar
+   ├─ Brand: "RS4"
+   ├─ Dynamic Links (based on authentication)
+   │  ├─ Home/Dashboard
+   │  ├─ Contact Us
+   │  ├─ Corporate Info
+   │  └─ Services
+   │
+   └─ User Actions
+      ├─ Unauthenticated: Login, Register
+      └─ Authenticated: Welcome message, Profile, Logout
+
+C. Color Scheme
+   ├─ Primary Background: Linear gradient (#438778 to #143a58)
+   ├─ Navigation: Dark (#040e05)
+   ├─ Accents: Green (#0cc652, #339933)
+   ├─ Text: White on dark backgrounds
+   └─ Tables: Dark translucent (#172d3b, rgba)
+
+D. UI Components
+   ├─ Forms
+   │  ├─ Dark theme (#1b1b1b background)
+   │  ├─ Glowing input fields (green glow on focus)
+   │  ├─ Custom styled inputs
+   │  └─ Submit buttons with hover effects
+   │
+   ├─ Tables
+   │  ├─ Search functionality
+   │  ├─ Dark translucent panels
+   │  ├─ Alternating row colors
+   │  └─ Action buttons (delete, edit)
+   │
+   ├─ Cards
+   │  ├─ Dashboard action cards
+   │  ├─ 3D hover effects
+   │  ├─ Glass morphism style
+   │  └─ Box shadows
+   │
+   ├─ Buttons
+   │  ├─ Primary: Green (#58df89)
+   │  ├─ Secondary: Black
+   │  ├─ Rounded borders (100px)
+   │  └─ Scale & shadow on hover
+   │
+   └─ Modals
+      ├─ Bootstrap modals
+      ├─ Confirmation dialogs
+      └─ Form popups
+
+E. Page-Specific Designs
+   ├─ Homepage
+   │  ├─ Hero section with background image
+   │  ├─ Large heading
+   │  └─ Call-to-action buttons
+   │
+   ├─ Login/Register Pages
+   │  ├─ Centered form container
+   │  ├─ Dark themed
+   │  ├─ Icon-enhanced input fields
+   │  └─ Role selection cards
+   │
+   ├─ Dashboard Pages
+   │  ├─ Manager section (#manager)
+   │  ├─ Action cards with 3D effects
+   │  └─ Quick access links
+   │
+   ├─ Profile Page
+   │  ├─ Profile image section
+   │  ├─ Tabbed information display
+   │  ├─ Edit button
+   │  └─ Guest house details (participants)
+   │
+   └─ Event Pages
+      ├─ Event listing tables
+      ├─ Register/Volunteer buttons
+      └─ Winner display
+
+F. Interactive Features
+   ├─ Search Functionality
+   │  ├─ Real-time table filtering
+   │  ├─ Highlight matching cells
+   │  └─ Result counter
+   │
+   ├─ Table Row Selection
+   │  ├─ Click to highlight
+   │  └─ Bold blue styling
+   │
+   ├─ Form Validation
+   │  ├─ Client-side validation
+   │  ├─ Server-side validation
+   │  └─ Error message display
+   │
+   └─ Flash Messages
+      ├─ Success (green)
+      ├─ Danger/Error (red)
+      ├─ Auto-dismiss
+      └─ Fixed positioning
+
+G. Footer
+   ├─ Contact Information
+   │  ├─ Address: MS-HALL, IIT-Kharagpur
+   │  ├─ Phone: 020-23672986
+   │  └─ Email: rs4@gmail.com
+   │
+   ├─ Social Media Links
+   │  ├─ Facebook, Twitter, Google+
+   │  ├─ LinkedIn, Instagram
+   │  └─ Circular icon buttons with hover effects
+   │
+   └─ Copyright Notice
+      └─ Copyright © 2023 RS4
+
+H. Responsive Design
+   ├─ Mobile-first approach
+   ├─ Bootstrap breakpoints
+   ├─ Collapsible navigation
+   └─ Adaptive card layouts
+
+================================================================================
+9. AUTHENTICATION & SECURITY
+================================================================================
+
+AUTHENTICATION MECHANISM:
+-------------------------
+
+A. Password Security
+   ├─ Algorithm: Bcrypt
+   ├─ Implementation: Flask-Bcrypt
+   ├─ Hash Generation: bcrypt.generate_password_hash()
+   ├─ Hash Verification: bcrypt.check_password_hash()
+   └─ Storage: Hashed passwords in database (VARCHAR(100))
+
+B. Session Management
+   ├─ Flask Sessions (server-side)
+   ├─ Secret Key: 'ec9439cfc6c796ae2029594d'
+   ├─ Session Variables:
+   │  ├─ session['username']: Logged-in user
+   │  └─ session['role']: User role (student/participant/organizer/admin)
+   │
+   ├─ Session Lifecycle:
+   │  ├─ Created on successful login
+   │  ├─ Persists across requests
+   │  └─ Destroyed on logout (session.pop())
+   │
+   └─ Timeout: Browser session (closes on browser exit)
+
+C. Authentication Flow
+   1. User submits login form
+   2. Form validation (Flask-WTF)
+   3. Query database for user
+   4. Verify password with bcrypt
+   5. Create session if valid
+   6. Store username and role in session
+   7. Redirect to role-specific dashboard
+
+D. Authorization Checks
+   ├─ Route-level checks
+   ├─ Session role verification
+   ├─ Ownership validation (e.g., organizer can only modify their events)
+   └─ Redirect unauthorized users
+
+E. Form Security
+   ├─ CSRF Protection (Flask-WTF)
+   ├─ Input Validation
+   │  ├─ Length constraints
+   │  ├─ Email format validation
+   │  ├─ Password confirmation
+   │  └─ Custom validators
+   │
+   └─ Sanitization
+      └─ BeautifulSoup used in validators
+
+SECURITY CONCERNS & VULNERABILITIES:
+------------------------------------
+
+⚠️ CRITICAL ISSUES:
+
+1. Hard-coded Database Credentials
+   - Password: '2020' in plaintext
+   - Location: models.py and setup.py
+   - Risk: Credential exposure
+
+2. Hard-coded Secret Key
+   - Secret: 'ec9439cfc6c796ae2029594d'
+   - Location: __init__.py
+   - Risk: Session hijacking
+
+3. SQL Injection Vulnerability
+   - Raw SQL with string formatting in some places
+   - Mitigation: Most queries use parameterized queries
+   - Risk: Medium (mostly mitigated with %s placeholders)
+
+4. No HTTPS Enforcement
+   - Running on HTTP (development)
+   - Risk: Man-in-the-middle attacks
+
+5. Debug Mode Enabled
+   - app.run(debug=True)
+   - Risk: Information disclosure
+
+6. No Rate Limiting
+   - No protection against brute force
+   - Risk: Password guessing attacks
+
+7. Weak Password Policy
+   - Minimum 6 characters only
+   - No complexity requirements
+   - Risk: Weak passwords
+
+8. Email Credentials in Frontend
+   - SMTP.js with SecureToken in JavaScript
+   - Token: 'f4cbc274-c85c-47f7-a5c0-099ca3f19b88'
+   - Risk: Token exposure
+
+9. No Input Length Limits on Some Fields
+   - Description field: VARCHAR(1024)
+   - Risk: Resource exhaustion
+
+10. Session Fixation
+    - No session regeneration on login
+    - Risk: Session hijacking
+
+RECOMMENDED SECURITY IMPROVEMENTS:
+----------------------------------
+1. Use environment variables for secrets
+2. Implement HTTPS in production
+3. Add rate limiting (Flask-Limiter)
+4. Strengthen password policy
+5. Add CAPTCHA for forms
+6. Implement session regeneration
+7. Add audit logging
+8. Use ORM (SQLAlchemy) to prevent SQL injection
+9. Add input sanitization
+10. Implement password reset properly
+11. Add two-factor authentication
+12. Remove debug mode in production
+
+================================================================================
+10. DATA FLOW
+================================================================================
+
+TYPICAL USER FLOWS:
+-------------------
+
+A. Student Registration & Event Participation
+   ┌─────────────────┐
+   │  Student visits │
+   │   /register     │
+   └────────┬────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Select Student      │
+   │ Registration        │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Fill form:          │
+   │ - Name, Roll, Dept  │
+   │ - Username, Email   │
+   │ - Password          │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Server Validation:  │
+   │ - Unique username   │
+   │ - Unique email      │
+   │ - Unique roll       │
+   │ - Password strength │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Hash password       │
+   │ Insert into DB      │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Redirect to /login  │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Student logs in     │
+   │ /login_student      │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Authenticate        │
+   │ Create session      │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Redirect to         │
+   │ /student dashboard  │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ View events:        │
+   │ - Registered        │
+   │ - Volunteer pending │
+   │ - Volunteer active  │
+   │ - Available         │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Register for event  │
+   │ (POST request)      │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Insert into         │
+   │ student_event table │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Flash success       │
+   │ Reload dashboard    │
+   └─────────────────────┘
+
+B. Organizer Event Creation & Management
+   ┌─────────────────────┐
+   │ Organizer logs in   │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Navigate to         │
+   │ /create_event       │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Fill event form:    │
+   │ - Name, Date, Time  │
+   │ - Description       │
+   │ - Prize amounts     │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Server validation   │
+   │ - Unique event name │
+   │ - Required fields   │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Insert into event   │
+   │ table with org_name │
+   │ = session username  │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ View in             │
+   │ /organizer_events   │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Click event details │
+   │ /event_details/{id} │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ View:               │
+   │ - Event info        │
+   │ - Pending volunteers│
+   │ - Sanctioned vols   │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Approve volunteer   │
+   │ (POST request)      │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Update              │
+   │ volunteer_event     │
+   │ status='sanctioned' │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Navigate to         │
+   │ /set_winners/{id}   │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Enter winner        │
+   │ usernames (1,2,3)   │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Validate winners    │
+   │ participated        │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Update event table  │
+   │ with winners        │
+   └─────────────────────┘
+
+C. Participant Accommodation Booking
+   ┌─────────────────────┐
+   │ Participant logs in │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Check profile       │
+   │ accommodation=null  │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Navigate to         │
+   │ /guest_house        │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Query guest houses  │
+   │ WHERE available>0   │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Display:            │
+   │ - Name, Type        │
+   │ - Total/Available   │
+   │ - Price             │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Select & book room  │
+   │ (POST request)      │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ UPDATE participant  │
+   │ SET accommodation=  │
+   │ guest_house_name    │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ UPDATE guest_house  │
+   │ SET available_rooms │
+   │ = available_rooms-1 │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Redirect to /profile│
+   │ Show booking details│
+   └─────────────────────┘
+
+D. Admin User Management
+   ┌─────────────────────┐
+   │ Admin logs in       │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ /admin dashboard    │
+   │ Action cards        │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Select action:      │
+   │ - Add Student       │
+   │ - Add Participant   │
+   │ - Add Organizer     │
+   │ - Add Event, etc.   │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Fill respective form│
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Server validation   │
+   │ Hash password       │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Insert into DB      │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ View records:       │
+   │ - /view_student     │
+   │ - /view_participant │
+   │ - /view_organizer   │
+   │ - etc.              │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ Delete option       │
+   │ (POST with record)  │
+   └────────┬────────────┘
+            │
+            ▼
+   ┌─────────────────────┐
+   │ DELETE FROM table   │
+   │ WHERE id=...        │
+   │ (CASCADE deletes)   │
+   └─────────────────────┘
+
+================================================================================
+11. FILE ORGANIZATION
+================================================================================
+
+Code Organization Principles:
+------------------------------
+
+1. Separation of Concerns
+   - Models: Data access & business logic
+   - Routes: Request handling & flow control
+   - Forms: Input validation & sanitization
+   - Templates: Presentation layer
+
+2. Template Inheritance
+   - base.html: Master template
+   - Child templates extend base
+   - Reusable components in includes/
+
+3. Static Assets
+   - Images in static/img/
+   - External CSS/JS via CDN
+   - Custom styles in <style> tags
+
+4. Configuration
+   - Secret key in __init__.py
+   - Database config in models.py
+   - No environment-based config
+
+================================================================================
+12. API ENDPOINTS & ROUTES
+================================================================================
+
+COMPLETE ROUTE MAPPING:
+-----------------------
+
+PUBLIC ROUTES (No Authentication Required):
+--------------------------------------------
+GET  /                          → home_page()
+GET  /home                      → home_page()
+GET  /contact_us                → contact_us_page()
+
+GET  /register                  → register_page()
+GET  /register_student          → register_student_page()
+POST /register_student          → register_student_page()
+GET  /register_participant      → register_participant_page()
+POST /register_participant      → register_participant_page()
+GET  /register_organizer        → register_organizer_page()
+POST /register_organizer        → register_organizer_page()
+
+GET  /login                     → login_page()
+GET  /login_student             → login_student_page()
+POST /login_student             → login_student_page()
+GET  /login_participant         → login_participant_page()
+POST /login_participant         → login_participant_page()
+GET  /login_organizer           → login_organizer_page()
+POST /login_organizer           → login_organizer_page()
+GET  /login_admin               → login_admin_page()
+POST /login_admin               → login_admin_page()
+
+AUTHENTICATED ROUTES:
+---------------------
+GET  /logout                    → logout_page()
+GET  /dashboard                 → dashboard_page() (role router)
+
+STUDENT ROUTES:
+---------------
+GET  /student                   → student_page()
+POST /student                   → student_page() (register for event/volunteer)
+GET  /edit_profile_student      → edit_profile_student_page()
+POST /edit_profile_student      → edit_profile_student_page()
+
+PARTICIPANT ROUTES:
+-------------------
+GET  /participant               → participant_page()
+POST /participant               → participant_page() (register for event)
+GET  /guest_house               → guest_house_page()
+POST /guest_house               → guest_house_page() (book room)
+GET  /edit_profile_participant  → edit_profile_participant_page()
+POST /edit_profile_participant  → edit_profile_participant_page()
+
+ORGANIZER ROUTES:
+-----------------
+GET  /organizer                 → organizer_page()
+GET  /create_event              → create_event_page()
+POST /create_event              → create_event_page()
+GET  /organizer_events          → organizer_events_page()
+POST /organizer_events          → organizer_events_page() (delete event)
+GET  /event_details/<token>     → event_details_page()
+POST /event_details/<token>     → event_details_page() (accept volunteer)
+GET  /set_winners/<token>       → set_winners_page()
+POST /set_winners/<token>       → set_winners_page()
+GET  /edit_profile_organizer    → edit_profile_organizer_page()
+POST /edit_profile_organizer    → edit_profile_organizer_page()
+
+ADMIN ROUTES:
+-------------
+GET  /admin                     → admin_page()
+
+GET  /add_student               → add_student_page()
+POST /add_student               → add_student_page()
+GET  /add_participant           → add_participant_page()
+POST /add_participant           → add_participant_page()
+GET  /add_organizer             → add_organizer_page()
+POST /add_organizer             → add_organizer_page()
+
+GET  /add_event                 → add_event_page()
+POST /add_event                 → add_event_page()
+GET  /add_student_event         → add_student_event_page()
+POST /add_student_event         → add_student_event_page()
+GET  /add_participant_event     → add_participant_event_page()
+POST /add_participant_event     → add_participant_event_page()
+GET  /add_volunteer_event       → add_volunteer_event_page()
+POST /add_volunteer_event       → add_volunteer_event_page()
+GET  /add_guest_house           → add_guest_house_page()
+POST /add_guest_house           → add_guest_house_page()
+
+GET  /view_student              → view_student_page()
+POST /view_student              → view_student_page() (delete)
+GET  /view_participant          → view_participant_page()
+POST /view_participant          → view_participant_page() (delete)
+GET  /view_organizer            → view_organizer_page()
+POST /view_organizer            → view_organizer_page() (delete)
+GET  /view_event                → view_event_page()
+POST /view_event                → view_event_page() (delete)
+GET  /view_student_event        → view_student_event_page()
+POST /view_student_event        → view_student_event_page() (delete)
+GET  /view_participant_event    → view_participant_event_page()
+POST /view_participant_event    → view_participant_event_page() (delete)
+GET  /view_volunteer_event      → view_volunteer_event_page()
+POST /view_volunteer_event      → view_volunteer_event_page() (delete)
+GET  /view_guest_house          → view_guest_house_page()
+POST /view_guest_house          → view_guest_house_page() (delete)
+
+COMMON ROUTES (Authenticated):
+------------------------------
+GET  /profile                   → profile_page()
+POST /profile                   → profile_page() (set food preference)
+
+Total Routes: 60+
+
+================================================================================
+13. DESIGN PATTERNS & BEST PRACTICES
+================================================================================
+
+PATTERNS USED:
+--------------
+
+1. MVC Pattern (Model-View-Controller)
+   - Models: Database interaction (models.py)
+   - Views: Templates (templates/)
+   - Controllers: Route handlers (routes.py)
+
+2. Template Method Pattern
+   - Base templates (base.html)
+   - Template inheritance
+   - Block overriding
+
+3. Repository Pattern (Partial)
+   - Database queries centralized in models.py
+   - Not fully implemented (queries also in routes)
+
+4. Session Facade
+   - current_user_cls wraps session data
+   - Consistent user object across templates
+
+5. Decorator Pattern
+   - Flask route decorators (@app.route)
+   - Form validators (@validators)
+
+6. Factory Pattern
+   - Form instantiation
+   - Query building
+
+CODING PRACTICES:
+-----------------
+
+✓ GOOD PRACTICES:
+1. Password hashing (bcrypt)
+2. Parameterized queries (mostly)
+3. Form validation (Flask-WTF)
+4. Template inheritance
+5. Flash messages for feedback
+6. Separation of concerns (mostly)
+7. Consistent naming conventions
+8. CASCADE delete constraints
+
+✗ AREAS FOR IMPROVEMENT:
+1. No ORM usage (raw SQL)
+2. Global database connection
+3. Hard-coded credentials
+4. No environment configuration
+5. Limited error handling
+6. No logging
+7. No unit tests
+8. Repeated code (DRY violation)
+9. Large route functions (SRP violation)
+10. No API versioning
+11. No documentation strings
+12. Mixed concerns in routes
+
+================================================================================
+14. LIMITATIONS & SECURITY CONCERNS
+================================================================================
+
+FUNCTIONAL LIMITATIONS:
+-----------------------
+1. No password reset functionality (commented out)
+2. No email verification
+3. No file upload (profile pictures)
+4. No real-time notifications
+5. No search functionality (except table search)
+6. No pagination on large datasets
+7. No export functionality (CSV, PDF)
+8. No multi-language support
+9. No accessibility features
+10. Single guest house booking (no cancellation)
+
+SCALABILITY CONCERNS:
+---------------------
+1. Single database connection
+2. No connection pooling
+3. No caching mechanism
+4. Synchronous request handling
+5. No load balancing
+6. No CDN for static assets
+7. In-memory session storage
+
+SECURITY ISSUES (Reiterated):
+-----------------------------
+1. Hard-coded secrets
+2. Debug mode in production
+3. No HTTPS enforcement
+4. Weak password policy
+5. No rate limiting
+6. No CAPTCHA
+7. Session fixation vulnerability
+8. Exposed SMTP credentials
+9. No CSP headers
+10. No input sanitization in some areas
+
+DEPLOYMENT CONSIDERATIONS:
+--------------------------
+1. Use production WSGI server (Gunicorn, uWSGI)
+2. Set up reverse proxy (Nginx)
+3. Enable HTTPS (SSL/TLS)
+4. Use environment variables
+5. Disable debug mode
+6. Set up database backups
+7. Implement monitoring
+8. Add logging
+9. Configure firewall
+10. Use production secret key
+
+================================================================================
+CONCLUSION
+================================================================================
+
+This University Cultural Festival Management System is a comprehensive
+web application built with Flask and PostgreSQL. It follows a traditional
+MVC architecture with server-side rendering.
+
+The system successfully implements:
+- Multi-role user management
+- Event creation and registration
+- Volunteer coordination
+- Accommodation booking
+- Prize distribution
+
+While functional for educational purposes, significant security and
+scalability improvements are needed for production deployment.
+
+Key Strengths:
+- Clear role separation
+- Comprehensive feature set
+- User-friendly interface
+- Database integrity (foreign keys, cascades)
+
+Key Weaknesses:
+- Security vulnerabilities
+- Hard-coded configuration
+- Scalability limitations
+- No automated testing
+
+This documentation provides a complete overview of the system's architecture,
+design, and implementation details for maintenance, enhancement, or migration.
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================
